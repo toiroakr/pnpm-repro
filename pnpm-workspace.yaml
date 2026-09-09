@@ -1,0 +1,4 @@
+minimumReleaseAge: 4320
+minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - is-odd@3.0.1 || 2.0.0
