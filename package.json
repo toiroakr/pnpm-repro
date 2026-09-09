@@ -1,9 +1,0 @@
-{
-  "name": "pnpm-no-bail-repro",
-  "private": true,
-  "packageManager": "pnpm@12.3.4",
-  "scripts": {
-    "check:fast-fail": "node -e \"setTimeout(()=>{console.log('fast-fail finished'); process.exitCode=1}, 100)\"",
-    "check:slow-ok": "node -e \"setTimeout(()=>{console.log('slow-ok finished'); process.exitCode=0}, 1000)\""
-  }
-}
