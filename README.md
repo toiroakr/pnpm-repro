@@ -21,13 +21,21 @@ printed; total time ~100-200ms.
 
 ## Run it
 
+`package.json` intentionally has no `packageManager` field: pnpm's
+self-managed-version-switching reads that field and silently re-execs as the
+pinned version regardless of what's explicitly on `PATH`, which would defeat
+a version comparison.
+
+Put the pnpm version you want to test on `PATH`, then:
+
 ```sh
-pnpm install
-time pnpm run --no-bail "/^check:/"
+./repro.sh
 ```
 
-Swap the `packageManager` field between `pnpm@12.3.4` and `pnpm@12.3.4` (or
-run the corresponding `pnpm/dist/pnpm.cjs` directly) to compare.
+`repro.sh` exits non-zero exactly when the bug reproduces (`slow-ok finished`
+never printed), so it works directly as a CI check — see
+[`.github/workflows/no-bail.yaml`](../../blob/main/.github/workflows/no-bail.yaml)
+on `main`, which runs it against pnpm 11.20.0 and 12.3.4 on every push.
 
 ## Suspected cause
 
