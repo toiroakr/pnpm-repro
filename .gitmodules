@@ -1,0 +1,4 @@
+[submodule "pnpm-fix"]
+	path = pnpm-fix
+	url = git@github.com:toiroakr/pnpm.git
+	branch = fix/exclude-prune
