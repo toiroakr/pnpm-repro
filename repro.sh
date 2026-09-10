@@ -30,3 +30,11 @@ if grep -q "is-odd@2.0.0" pnpm-lock.yaml; then
 else
   echo "no -- fully gone, confirms nothing still needs it"
 fi
+
+echo
+if grep -q "minimumReleaseAgeExclude:" pnpm-workspace.yaml; then
+  echo "FAIL: minimumReleaseAgeExclude was not pruned (pnpm 12 bug reproduced)"
+  exit 1
+else
+  echo "OK: minimumReleaseAgeExclude was pruned as expected"
+fi
