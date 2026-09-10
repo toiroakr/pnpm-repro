@@ -8,10 +8,16 @@ name: exclude-prune repro
 # The pnpm versions below are pinned exactly (not a range) so Renovate keeps
 # bumping the 12.x entry as new patch releases ship. Once that bump makes
 # this job green, the fix has landed upstream and this case can be deleted.
+#
+# `repro-fixed` builds pnpm from the `exclude-prune` branch's `pnpm-fix`
+# submodule (toiroakr/pnpm@fix/exclude-prune, not yet sent upstream) and
+# runs the same repro.sh against it, confirming the fix actually works
+# before it's proposed to pnpm/pnpm.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions: {}
@@ -33,5 +39,30 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ matrix.pnpm-version }}
+
+      - run: ./repro.sh
+
+  repro-fixed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: exclude-prune
+          submodules: recursive
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.97.0"
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: pnpm-fix -> target
+
+      - name: Build patched pnpm
+        working-directory: pnpm-fix
+        run: cargo build --release -p pnpm-cli
+
+      - name: Put the patched pnpm first on PATH
+        run: echo "${{ github.workspace }}/pnpm-fix/target/release" >> "$GITHUB_PATH"
 
       - run: ./repro.sh
