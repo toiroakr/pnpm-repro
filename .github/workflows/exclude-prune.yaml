@@ -1,0 +1,37 @@
+name: exclude-prune repro
+
+# Checks out the `exclude-prune` branch's repro.sh and runs it against a
+# matrix of pnpm versions. repro.sh exits non-zero when the bug reproduces
+# (minimumReleaseAgeExclude wasn't pruned), so this job is red on a buggy
+# pnpm version and green on a fixed one -- no separate assertion step needed.
+#
+# The pnpm versions below are pinned exactly (not a range) so Renovate keeps
+# bumping the 12.x entry as new patch releases ship. Once that bump makes
+# this job green, the fix has landed upstream and this case can be deleted.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  repro:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pnpm-version:
+          - "11.22.0" # expected to pass
+          - "12.3.4" # expected to fail until pnpm fixes the regression
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: exclude-prune
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ matrix.pnpm-version }}
+
+      - run: ./repro.sh
