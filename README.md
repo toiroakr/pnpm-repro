@@ -12,4 +12,8 @@ Minimal reproductions for pnpm regressions/bugs, one case per branch.
   transition. Filed as
   [pnpm/pnpm#14759](https://github.com/pnpm/pnpm/issues/14759).
 
-Each branch is self-contained: check it out and follow its own README.
+Each branch is self-contained: check it out and follow its own README. Each
+case also has a matching workflow under `.github/workflows/` that runs its
+`repro.sh` against a pnpm-version matrix on every push to `main`, so the
+Actions tab shows the regression directly (green on a fixed version, red on
+a buggy one).
